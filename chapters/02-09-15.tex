@@ -1,0 +1,140 @@
+$$ \set{X} = \braces{X_1, \ldots, X_n}, x_i \in \set{X} \subset \setR^d $$
+$$ \set{P}\braces{\set{X} | \theta}, \theta \in \Theta \subset \setR^p $$
+
+Оценки:
+\begin{itemize}
+	\item точечные
+	\item интервальные
+\end{itemize}
+
+Необходимые свойства:
+\begin{itemize}
+	\item Состоятельность: $\hat{\theta}_n \overset{P}{\to} \theta, n \to \infty$
+	\item Несмещенность: $\set{E}\hat{\theta}_n = \theta$ (асимптотическое равенство в пределе)
+\end{itemize}
+Взаимосвязь:
+\begin{itemize}
+	\item $\hat{\theta}_n \overset{P}{\to} \theta \notif \set{E}\hat{\theta}_n = \theta$ {\Huge(}пример: $\theta=0, \hat{\theta}_n = \frac{1}{n}${\Huge)}
+	\item $\hat{\theta}_n \overset{P}{\to} \theta \notif \set{E}\hat{\theta}_n \underset{\infty}{\to} \theta$ (пример: $ \hat{\theta}_n = 
+	\begin{cases}
+    0       & \text{if } p=1-\frac{1}{n}\\
+    n^2  &\text{if } p=\frac{1}{n}\\
+  \end{cases},
+  \set{E}\hat{\theta}_n = n^2 \frac{1}{n} = n $)
+\end{itemize}
+
+Обратно:
+\begin{itemize}
+	\item $ \set{E}\hat{\theta}_n = \theta \notif \hat{\theta}_n \overset{P}{\to} \theta$ (пример:) $\hat{\theta}_n = \begin{cases}
+    n^2       & \text{if } p=\frac{1}{2}\\
+    -n^2  &\text{if } p=\frac{1}{2}\\
+  \end{cases}$
+	\item $\set{E}\hat{\theta}_n \underset{\infty}{\to} \theta \notif \hat{\theta}_n \overset{P}{\to} \theta $
+\end{itemize}
+\begin{example}
+$$ x \sim Bern(\theta), \theta \in (0,1), n=1$$. \\ Оценить $\phi(\theta) = \frac{1}{\theta}$ - не существует несмещенной оценки. \\
+\\
+\solution{
+	$\hat{\phi}(x)$ - оценка, зависящая от реализации. Для распределения Бернулли нужно задать $\big(\hat{\phi}(0), \hat{\phi}(1)\big)$ \\
+	Несмещенность: $$ \set{E}\hat{\phi}(x) = \phi(\theta) = const $$
+	С другой стороны: $$ \set{E}\hat{\phi}(x) = (1-\theta)\hat{\phi}(0) + \theta\hat{\phi}(1) - \infty $$
+	Так как $\infty \neq const$, несмещенной оценки не существует
+}
+
+\end{example}
+
+\begin{example}
+$$ N(\mu, \sigma^2) $$
+$$ \hat{\sigma}^2 = \frac{1}{n} \sum_{i=1}^n (x_i-\bar{x})^2 $$
+Будет ли эта оценка смещенной, асимптотически смещенной? \\
+\solution{
+	$$\set{E}\hat{\sigma}^2 = \frac{1}{n}\set{E}\sum_{i=1}^n (x_i - \bar{x})^2 = \frac{1}{n}\sum_{i=1}^n \set{E} \braces{x_i^2 -2x_i\bar{x} + \bar{x}^2} = $$
+	$$ =\frac{1}{n} \sum_{i=1}^n \sigma^2 - \frac{2\sigma^2}{n} + \frac{n\sigma^2}{n^2} = \sigma^2 - \frac{\sigma^2}{n} = \frac{n-1}{n} \sigma$$ - смещенная оценка. \\
+	Несмещенную можно получить, домножив на $\frac{n}{n-1}$: $$ \frac{1}{n-1} \sum_{i=1}^n (x_i - \bar{x})^2 $$
+}
+\end{example}
+
+\subsection*{Способы доказательства состоятельности статистических оценок}
+\begin{enumerate}%[label=\circled{\arabic*}]
+	\item Подсчитать функцию распределения
+	\begin{example}
+	$$ p(x) = \begin{cases}
+	\frac{1}{\theta} & x\in(0, \theta) \\
+	0 & иначе \\
+	\end{cases} $$
+	где $0 \leq \theta_1 \leq \theta \leq \theta_2$ \\
+	\solution{
+	Оценим $\theta$ с помощью n-й порядковой статистики: $\hat{\theta}_n = X_{(n)}$ \\
+	Функция распределения: $$F(x) = \set{P}\braces{x_i \leq x} = \Big( \frac{x}{\theta}\Big)^n$$ \\
+	Оценить вероятность: $$ \set{P}\braces{|\hat{\theta}_n - \theta| > \epsilon} = \set{P}\braces{X_{(n)} \leq \theta - \epsilon} = \Big( 1 - \frac{\epsilon}{\theta}\Big)^n \to 0 (n \to \infty) $$
+	Наблюдение $>\theta$ невозможно, значит есть сходимость по вероятности
+	}
+	\end{example}
+	\item Закон больших чисел
+	\begin{itemize}
+		\item $\frac{1}{n}\sum_{i=1}^n x_i \overset{P}{\to} \set{E}x_1$
+		\item $\begin{cases}
+			\hat{\theta}_n \overset{P}{\to} \theta \\
+			\phi(t) \ непр. \ t=0 \\
+		\end{cases}$ $\Rightarrow \phi(\hat{\theta}_n) \overset{P}{\to} \phi(\theta) $
+	\end{itemize}
+
+	\item Если смещение и дисперсия стремятся к 0, то оценка состоятельная \\
+	\begin{proof} \\
+	$$ \begin{cases}
+			\set{E}(\hat{\theta}_n - \theta) \to 0 \\
+			\set{E}(\hat{\theta}_n - \set{E}\hat{\theta}_n) \to 0 \\
+		\end{cases} \Rightarrow \set{P}\braces{|\hat{\theta}_n - \theta| < \epsilon} \to 1 (n \to \infty) $$ 
+		Докажем через неравенство Чебышева:
+		$$ \set{P}\braces{|\hat{\theta}_n - \theta| > \epsilon} \leq \frac{\set{E}(\hat{\theta}_n - \theta)^2}{\epsilon^2}$$
+		$$  \set{P} \braces{|\hat{\theta}_n - \theta| > \epsilon} \to 0$$
+		$$ \set{E}(\hat{\theta}_n - \theta)^2 = \set{E}(\hat{\theta}n - \set{E}\hat{\theta}_n + \set{E}\hat{\theta}_n - \theta)^2 = \set{D}\hat{\theta}_n - 2 \set{E}(\hat{\theta}n - \set{E}\hat{\theta}_n)(\set{E}\hat{\theta}_n - \theta) + (\set{E}\hat{\theta}_n - \theta)^2 \to 0 $$
+	\end{proof}
+\end{enumerate}
+
+$\Leftrightarrow$
+
+\subsection*{Эффективные оценки} 
+Функция риска минимальна: $ D\hat{\theta}_n \to \min$ \\
+Оценка снизу: неравенство Рао-Крамера: $$ D\valuation \geq \frac{1}{nI_n(\theta)}, \ I_n(\theta) = \ex{\frac{\partial \ln L(X, \theta)}{\partial \theta}}^2$$
+Для смещенных оценок: $\ex{\valuation - \theta}^2 \geq \frac{1+b'(\theta)}{nI_n(\theta)} + b^2(\theta), b(\theta)$ - смещение
+
+\subsection*{Достаточные статистики}
+\begin{definition} Т - достаточная статистика, если $$ \prob{X|\theta, T_n} = \prob{X|T_n} $$
+\end{definition}
+
+\begin{theorem}
+Статистика достаточная, если $p(X, \theta) = g_{\theta}(T_n(X))h(X),\  g_{\theta}(T_n(X))$ не зависит от выборки напрямую \\
+	\begin{proof} \\
+	$\Rightarrow$ | \\
+	$$ \prob{X, \theta, T} = \prob{X, T|\theta}\prob{\theta} = \prob{X|T, \theta}P{\theta}P{T|\theta} = \prob{X|T} \prob{T, \theta} = h(X)g_{\theta}(T_n(X)) $$ \\
+	$\Leftarrow$ | \\
+	$$ \prob{X|T, \theta} = \frac{\prob{X, T_n, \theta}}{\prob{T_n, \theta}} = \frac{g_{\theta}(T_n(X))h(X)}{\sum_{\theta}(T_n(X'))h(X')} = \frac{h(X)}{\sum h(X)}, \ X'T_n(X') = T_n(X) $$
+	\end{proof}
+\end{theorem}
+
+\subsection*{Экспоненциальное семейство распределений}
+
+\begin{definition}
+$$\prob{X|\theta} = \exp \Big\{ C(\theta) + \sum_{j=1}^p t_j(X)A_j(\theta)\Big\}h(X)$$
+$ T = (t_1(X), \ldots, t_p(X)) $ - достаточная статистика
+\end{definition}
+
+\begin{theorem}
+$A = \braces{x: f(x, \theta) > 0}$ не зависит от параметра $\theta \in \Theta$ и является интервалом на $\setR$ и существует m-мерная достаточная статистика. Тогда: 
+\begin{enumerate}
+	\item $ m' \leq m \Rightarrow \exists C, \braces{t_j}, \braces{A_j}$ такие что это распределение из экспоненциального семейства
+	\item $ m=1 \Rightarrow m'=1$
+\end{enumerate}
+\end{theorem}
+
+\begin{theorem}[Колмогорова-Блэкуелла-Рао]
+Для несмещенной оценки $\valuation: \set{D}\valuation < \infty, \theta \in \Theta$ можно построить $\hat{\theta}_T = \ex{\valuation|T)}$ - несмещенная для достаточной статистики Т и $ \set{D}\hat{\theta}_T \leq \set{D}\valuation $
+\end{theorem}
+
+$$ L(X,\theta) = L(\theta) = \log \prob{x|\theta} $$
+Оценка методом максимального правдоподобия: $$ \check{\theta} = \arg \max_{\substack{\hat{\theta} \in \Theta}}L(\hat{\theta}) $$
+
+\begin{definition}
+Расстояние Кулльбека-Лейблера: $$ D_{KL}(p,q) = \int_{-\infty}^{\infty}p(x) \ln \frac{p(x)}{q(x)} dx $$
+\end{definition}

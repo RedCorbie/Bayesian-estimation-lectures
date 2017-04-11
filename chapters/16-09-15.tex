@@ -1,0 +1,101 @@
+\begin{definition}
+	Регулярность $p(\theta|x)\Pi(\theta), \ \theta \in \Theta$:
+	\begin{enumerate}
+		\item $\braces{x: p(x|\theta)>0}$ одинаков $\forall \theta \in \Theta$
+		\item $L(\theta, x) = \log p(\theta|x)$ трижды дифференцируема по $\theta$ в окрестности $(\theta_0-\delta, \theta_0+\delta)$:
+		\begin{itemize}
+			\item $\set{E}_{\theta_0} L'(\theta_0), \ \set{E}_{\theta_0} L''(\theta_0)$ - конечны
+			\item $\sup_{\theta \in (\theta_0-\delta, \theta_0+\delta)} |L'''(\theta, x)| < M(x), \ \set{E}_{\theta_0}M < \infty$ 
+		\end{itemize}
+		\item $\set{E}_{\theta_0} L(\theta_0) = 0$, \\ $\set{E}_{\theta_0} L''(\theta_0) = - \set{E}_{\theta_0} (L'(\theta_n))^2$
+		\item $I(\theta_0) = \set{E}_{\theta_0} (L'(\theta_0))^2 > 0$
+	\end{enumerate}
+\end{definition}
+
+\begin{theorem}
+	Пусть $p(\theta|x)$ удовлетворяет 1)-4) и $\valuation$ - состоятельная оценка максимального правдоподобия \\
+	$\Rightarrow$ $$\frac{1}{\sqrt{n}} (\valuation - \theta_0) \overset{D}{\to} N(0, \frac{1}{I(\theta_0)})$$
+
+	\begin{proof}
+		$0 = L'_n(\valuation), \ \valuation$ - ОМП, $L_n(\theta) = \sum_{i=1}^nL(\theta, x_i)$ \\
+		$$0 = L'_n(\theta_0) + (\valuation-\theta_0)L''_n(\theta_0) + \frac{(\valuation - \theta_0)^2}{2} L'''_n(\theta'), \ \theta_0<\theta'<\valuation$$
+		$$ \sqrt{n}(\valuation-\theta) = \frac{\frac{1}{\sqrt{n}}L'_n(\theta_0)}{-\frac{1}{n}L''_n(\theta_0) - \frac{1}{2}(\valuation-\theta_0)\frac{1}{n}L''(\theta')} $$
+		Из ЦПТ:
+		$$ \frac{1}{\sqrt{n}}L'_n(\theta_0) \overset{D}{\to} N(0, I(\theta_0)) $$
+		Из УЗБЧ:
+		$$ -\frac{1}{n} L'_n(\theta_0) - \frac{1}{2}(\valuation-\theta_0)\frac{1}{n}L''_n(\theta') \to i(\theta_0) $$
+	\end{proof}
+\end{theorem}
+
+\begin{definition}
+	Для байесовского случая дополнительные условия:
+	\begin{enumerate}
+		\item[5.] $\forall \delta > 0 \exists \varepsilon: \set{P}_{\theta_0}\braces{\sup_{|\theta-\theta_0|>\delta} \frac{1}{n}(L_n(\theta) - L_n(\theta_0)) \leq \varepsilon} \to 1$
+		\item[6.] $\pi(\theta)$ - априорное распределение - непрерывно и в $\theta_0>0$
+	\end{enumerate}
+\end{definition}
+
+\begin{theorem}
+	Пусть 1)-6) выполнены. Тогда: 
+	$$ \int_{\setR} |\pi^*(S|x) - \frac{\sqrt{I(\theta_0)}}{\sqrt{2\pi}}\exp\braces{-\frac{S^2}{2}I(\theta_0)}|ds \overset{\set{P}_{\theta_0}}{\to} 0 $$
+\end{theorem}
+
+\begin{theorem}[Бернштейна-фон Мизеса]
+	$$ \int \pi(\theta)|\theta|  d\theta < \infty $$
+	$$ \theta_n^* = \int_{\setR} \theta p(\theta|x) d\theta $$ - байесовская оценка \\
+	Тогда:
+	\begin{enumerate}
+		\item $ \sqrt{n} (\valuation - \theta_n^*) \overset{\set{P}_{\theta_0}}{\to} 0 $
+		\item $ \sqrt{n}(\theta_n^* - \theta_0) \overset{D}{\to} N(0, \frac{1}{I(\theta_0)}$
+	\end{enumerate}
+\end{theorem}
+
+\subsection*{Априорное распределение Джеффри}
+$$ \pi_j(\theta) \propto \sqrt{I(\theta)} $$
+$$ I(\theta) = -\set{E}_{\theta_0} \braces{\frac{\partial^2 \log p(x|\theta)}{\partial \theta^2}} $$
+
+\subsection*{Опорное априорное распределение}
+$$ \pi^*(\theta) = \arg \max_{\substack{\pi(\theta)}} MI(\Theta, T) $$
+T - достаточная статистика $X_1, \ldots, X_n$
+$$ MI(\Theta, T) = \int p(t) \int p(\theta, t) \log \frac{p(\theta | t)}{\pi(\theta)} d\theta dt = \int p(t) KL(p(\theta|t)|| \pi(\theta)) dt $$
+
+\begin{example}
+	$$ X \sim N(\theta, I), \ x \in \setR^p, \  \ ||\theta||^2 - ? $$
+	\solution{
+		$$\prob{||theta||^2|X} \sim \Xi^2(p) + ||X||^2$$
+		$$ \set{E}_{\theta}\braces{||\theta||^2|X} = ||X||^2 + p $$
+		Для опорного распределения Джеффри $$ ||\theta||^2_{prob} $$ - оценка с минимальной дисперсией
+		$$ ||\theta||^2_{prob} = ||X||^2-p $$
+	}
+\end{example}
+
+$T^k$ - набор статистик. $$\pi_k(\theta) = \arg \max_{\substack{\pi(\theta)}} MI(\Theta, T^k)$$
+$$ MI(\Theta, T^k) = \int p(t^k) KL(p(\theta|t^k) || \pi(\theta)) dt^k = \int \pi(\theta) \log\frac{f_k(\theta)}{\pi(\theta)}d\theta $$
+где $$ f_k(\theta) = \exp \braces{\int p(t^k|\theta) \log p(\theta|t^k) dt^k} $$
+Для бесконечного числа экспериментов:
+$$ \pi^*(\theta) = \lim_{\substack{k \to \infty}} \pi_k(\theta) $$
+
+\begin{example}
+$$ \pi(\theta) \to \braces{p_i}, \ \Theta = \braces{\theta_1, \ldots, \theta_k}, q=f_k(\theta) $$
+$$ \arg \max_{\substack{p, \lambda}} \sum p_i \log \frac{q_i}{p_i} + \lambda(\sum p_i-1) - ? $$
+\solution{
+	Через метод множителей Лагранжа:
+	$$ (\log\frac{q_i}{p_i} + p_i \frac{q_i}{p_i}(-\frac{q_i}{p_i^2})) + \lambda = 0 $$
+	$$ \log\frac{q_i}{p_i} = \lambda - 1 $$
+	$$ \frac{q_i}{p_i} = e^{\lambda-1} \ \Rightarrow p_i=q_ie^{\lambda-1} $$
+	$\pi_i(\theta) \sim f_k(\theta) $ - в непрерывном случае
+}
+\end{example}
+
+\begin{example}
+Пусть $\hat{\theta}_k$ удовлетворяет теореме Бернштейна-фон Мизеса:
+$$ || p(\theta|\hat{\theta}_k) - N(\hat{\theta}_k, \frac{1}{I_k(\breve{\theta}_n)}) || \to 0 $$
+$$ I^{-1}_k(\theta_0) = \frac{1}{k}I^{-1}(\theta_0) $$
+$$ p(\theta|\hat{\theta}_k) \propto \sqrt{k} \sqrt{I(\hat{\theta}_k)} \exp \braces{-\frac{I(\hat{\theta}_2)}{2k}(\theta - \hat{\theta}_k)^2} $$
+Если $\theta_0$ - истинное значение:
+$$  p(\theta|\hat{\theta}_k) \approx \sqrt{k} \sqrt{I(\hat{\theta}_k)} \exp \braces{-\frac{I(\hat{\theta}_2)}{2k}(\theta - \theta_0)^2} = \sqrt{kI(\theta_0)}$$
+$\Rightarrow$
+$$ f_k(\theta) = \exp \braces{\int p(t^k|\theta) \log \sqrt{I(\theta)} dt^k} = \sqrt{I(\theta_0)} \exp \braces{\int p(t^k|\theta) dt^k} = \sqrt{I(\theta_0)} $$
+$\Rightarrow$ в одномерном случае опорное априорное распределение и априорное распределение Джеффри совпадают (но в многомерном - нет)
+	
+\end{example}

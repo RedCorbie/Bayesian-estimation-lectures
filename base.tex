@@ -1,0 +1,165 @@
+\documentclass[a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english, russian]{babel}
+\usepackage[fleqn]{amsmath}
+\usepackage{amsfonts, amssymb, amsthm, mathtools}
+\usepackage{amsmath}
+
+\usepackage{mathtools}
+\usepackage{fullpage}
+\usepackage[colorinlistoftodos]{todonotes}
+
+\usepackage{enumitem}
+\usepackage{tikz} 
+
+\title{Байесовские методы статистического оценивания}
+\author{ИППИ}
+
+
+\theoremstyle{plain}
+\newtheorem*{theorem-star}{Theorem}
+\newtheorem{theorem}{Theorem}
+\newtheorem*{lem-star}{Lemma}
+\newtheorem{lem}{Lemma}
+\newtheorem*{proposition-star}{Proposition}
+\newtheorem{proposition}{Proposition}
+\newtheorem{statement}{Statement}
+\newtheorem*{statement-star}{Statement}
+\newtheorem{corollary}{Corollary}
+\newtheorem*{corollary-star}{Corollary}
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\theoremstyle{definition}
+\newtheorem*{definition-star}{Definition}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+\newtheorem*{example-star}{Example}
+\newtheorem{problem}{Problem}
+\newtheorem{problem-star}{Problem}
+
+\newcommand{\solution}[1]{\textbf{Solution: } \\ #1 $\bullet$}
+
+\renewenvironment{proof}{{\bfseries Proof}}{$\bullet$}
+
+\newcommand{\walls}[1]{\left | #1 \right |} % |smth_vertically_large|
+\newcommand{\braces}[1]{\left\{ #1 \right\}} % {smth_vertically_large}
+\newcommand{\squarebraces}[1]{\left[ #1 \right]}
+
+\newcommand{\myequat}[1]{\begin{equation} #1 \nonumber \end{equation}}
+\newcommand{\pars}[1]{\left( #1 \right)} 
+\newcommand{\class}[1]{\left[ #1 \right]} 
+\newcommand{\dd}{\; \mathrm{d}}
+\newcommand{\setR}{\mathbb{R}}
+\newcommand{\setRn}{\mathbb{R}^n}
+\newcommand{\setRinf}{\mathbb{R}^{\infty}}
+\newcommand{\setC}{\mathbb{C}}
+\newcommand{\setN}{\mathbb{N}}
+\newcommand{\setZ}{\mathbb{Z}}
+\newcommand{\setQ}{\mathbb{Q}}
+\newcommand{\setM}{\mathcal{M}}
+\newcommand{\setL}{\mathcal{L}}
+\newcommand{\setA}{\mathcal{A}}
+\newcommand{\setF}{\mathcal{F}}
+\newcommand{\setX}{\mathcal{X}}
+\newcommand{\setE}{\mathcal{E}}
+\newcommand{\set}[1]{\mathbb{#1}}
+\newcommand{\ex}[1]{\mathbb{E}\braces{#1}}
+\newcommand{\prob}[1]{\mathbb{P}\braces{#1}}
+
+\newcommand{\valuation}{\hat{\theta}_n}
+\newcommand{\sumi}{\sum_{\substack{i=1}}^n}
+
+%\newcommand*\circled[1]{\tikz[baseline=(char.base)]{\node[shape=circle,draw,inner sep=2pt] (char) {#1};}}
+\newcommand*{\circled}[1]{%
+\footnotesize\protect\tikz
+\protect\node[shape=circle,draw,inner sep=2pt,line width=0.2mm](n1){#1};}
+
+
+
+\newcommand{\condset}[2]{\braces{\, #1 \mid #2 \,}} % definition of set with condition
+
+\newcommand{\expl}[1]{\walls{\text{#1}}} % explanation inside formula
+
+\newcommand{\toup}[1]{\xrightarrow{#1}}
+\newcommand{\toae}{\toup{\text{\,п.н.}}} % almost everywhere convergence designation
+\newcommand{\todown}[1]{\xrightarrow[#1]{}}
+
+\newcommand{\equp}[1]{\stackrel{#1}{=}}
+
+\newcommand{\conj}[1]{\overline{#1}} % complex conjugation
+\newcommand{\comp}[1]{\overline{#1}} % set complement
+
+\newcommand{\notiff}{%
+  \mathrel{{\ooalign{\hidewidth$\not\phantom{"}$\hidewidth\cr$\iff$}}}}
+
+\newcommand{\notif}{%
+  \mathrel{{\ooalign{\hidewidth$\not\phantom{"}$\hidewidth\cr$\Rightarrow$}}}}
+\newcommand\indep{\protect\mathpalette{\protect\independenT}{\perp}}
+\def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
+\newcommand{\argmax}{\arg\max}
+
+\DeclareMathOperator{\cov}{cov}
+
+\renewcommand{\emptyset}{\varnothing}
+\renewcommand{\epsilon}{\varepsilon}
+\renewcommand{\phi}{\varphi}
+\renewcommand{\leq}{\leqslant}
+\renewcommand{\geq}{\geqslant}
+\renewcommand{\Im}{\mathop{\mathrm{Im}}\nolimits}
+\renewcommand{\Re}{\mathop{\mathrm{Re}}\nolimits}
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+\newcommand{\bX}{\textbf{X}}
+
+\newcommand{\bigtitle}[1]{\title{\textbf{\underline{#1}}}}
+\newcommand{\boldtitle}[1]{\title{\textbf{#1}}}
+
+\newcommand*{\hm}[1]{#1\nobreak\discretionary{}%
+{\hbox{$\mathsurround=0pt #1$}}{}} 
+
+
+\begin{document}
+\maketitle
+
+\section*{02.09.15}
+\input{./chapters/02-09-15}
+
+\section*{09.09.15}
+\input{./chapters/09-09-15}
+
+\section*{16.09.15}
+\input{./chapters/16-09-15}
+
+\section*{23.09.15}
+\input{./chapters/23-09-15}
+
+\section*{30.09.15}
+\input{./chapters/30-09-15}
+
+\section*{07.10.15}
+\input{./chapters/07-10-15}
+
+\section*{14.10.15}
+\input{./chapters/14-10-15}
+
+\section*{21.10.2015}
+\begin{remark}
+	Презентацию можно взять у Бурнаева
+\end{remark}
+
+\section*{28.10.15}
+\input{./chapters/28-10-15}
+
+\section*{11.11.15}
+\input{./chapters/11-11-15}
+
+\section{18.11.15}
+\input{./chapters/18-11-15}
+
+\section{25.11.15} 
+\input{./chapters/25-11-15}
+
+\end{document}

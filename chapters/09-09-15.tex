@@ -1,0 +1,79 @@
+$X, \theta$
+$$ \prob{\theta|X} = \frac{p(X|\theta)\pi(\theta)}{p(X)} = p(X|\theta)p(theta)$$
+\begin{itemize}
+	\item $p(X|\theta)$ - правдоподобие
+	\item $\pi(\theta)$ - априорное распределение
+	\item $p(\theta|X)$ - апостериорное распределение
+	\item $p(X)$ - маргинальное распределение, $p(X) = \int_{\Theta} p(X|\theta)\pi(\theta)d\theta$
+\end{itemize}
+
+\begin{definition}
+$(X_1, \ldots, X_n, \ldots)$ - бесконечно перестановочные, если $\forall n \forall \pi$ $$ p(X_1, \ldots, X_n) = p(X_{\pi_1}, \ldots, X_{\pi_n})$$
+\end{definition}
+
+\begin{theorem}[де Финетти]
+Пусть последовательность бесконечно перестановочных	$(X_1, \ldots, X_n, \ldots) \Leftrightarrow \forall n$ для некоторой $p$ на $\theta$
+$$ p(X_1, \ldots, X_n) = \int \prod_{i=1}^n p(x|\theta) p(d\theta) $$
+$p(d\theta) = \pi(\theta)$
+\end{theorem}
+
+$$ l(\theta, \delta(x)), \theta \in \Theta, p(x|\theta) $$
+$$ \delta(x) = \frac{1}{n} \sum_{\substack{i=1}}^n x_i $$
+$$ l(\theta, \delta(x)) = (\theta-\delta(x))^2 $$
+Введем понятие риска:
+$$ R(\theta, \delta) = \set{E}_{\theta}\squarebraces{l(\theta, \delta(x))} = \int_x l(\theta, \delta(x)) p(x|\theta) dx $$
+$\set{E}_{\theta} \delta(x) = \theta$ - несмещенная оценка
+$$ \sup_{\substack{\theta in \Theta}} R(\theta, \delta_i) \leq \sup_{\substack{\theta in \Theta}} R(\theta, \delta)$$
+
+\begin{definition}
+	Апостериорный риск: $$ \rho(\pi, \delta(x)) = \int l(\theta, \delta(x)) p(\theta|x) d\theta $$
+\end{definition}
+
+\begin{definition}
+	Байесовское лучшее решающее правило: $$ \delta^*(x) = \arg \min_{\substack{\delta(x)}} \rho(\pi, \delta(x)) $$
+\end{definition}
+
+\begin{example}
+	$$\rho(\pi, \delta(x)) =\int (\theta - \delta(x))^2 p(\theta|x) d\theta  = \int \squarebraces{(\theta^2p(\theta|x) - 2\theta\delta(x)p(\theta|x) + 
+	\delta^2(x)p(\theta|x))d\theta} = 0$$
+	$$ \delta^*(x) = \int \theta p(\theta|x)d\theta$$
+\end{example}
+
+\begin{definition}
+	Байесовский риск: $$ r(\pi, \delta) = \int R(\theta, \delta) \pi(\theta) d\theta = \int p(x, \pi) p(x)dx $$
+\end{definition}
+
+\begin{example}
+	$$ x_i \sim N(\mu, \sigma^2), \ \mu - ? $$	\\
+	\solution{
+	$$\pi(\mu) = N(\eta, \tau^2), \eta=100, \tau = \delta^2 $$
+	$$ \ex{\mu|X} = \frac{\squarebraces{\frac{\eta}{\tau^2} + \frac{n}{\sigma^2}\bar{x}}}{\squarebraces{\frac{1}{\tau^2} + \frac{n}{\sigma^2}}} = \frac{\eta}{11} + \frac{10}{11}\bar{x}, \ \ \bar{x} = \frac{1}{n}\sum_{\substack{i=1}}^n x_i$$
+	}
+\end{example}
+
+\begin{definition}
+	Сопряженное априорное распределение – априорное и апостериорное распределения лежат в одном семействе
+\end{definition}
+
+\begin{example}
+	$$ x_i \sim B(1, \theta)$$ $$ \theta \sim \pi(\theta) = \frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}\theta^{\alpha-1}(1-\theta)^{\beta-1} $$
+	$$ \Gamma(\theta|X) = c(X) \theta^{\alpha+r-1}(1-\theta)^{\beta + (n-r) - 1} $$
+	$$ r = \sum_{\substack{i=1}}^n x_i$$
+	$$ \ex{\theta|X} = \frac{\alpha+\beta}{\alpha+\beta+n} \frac{\alpha}{\alpha+\beta} \frac{n}{\alpha+\beta+n} \frac{r}{n} $$
+	$\alpha=\beta=1$ - равномерное распределение, $\pi(\theta)=const$ \\
+	$\alpha=\beta=\frac{1}{2} \ \Rightarrow \ \pi(\theta) \propto \sqrt{I(\theta)}, \ I(\theta) = -\set{E}_{\theta}\squarebraces{\frac{{\mathrm d}^2 \log p(x|\theta)}{{\mathrm d}^2 \theta}} $
+\end{example}
+
+\begin{definition}
+	Априорное распределение Джеффри: $$ \pi(\theta) \propto \sqrt{I(\theta)} $$
+\end{definition}
+
+\begin{definition}
+	Априорное распределение Джеффри - опорное, если $$ KL(\pi(\theta), p(\theta|x)) \to \max $$
+	$$ \arg \max MI(\Theta, \setX) = \int \int p(\theta, x) \log \frac{p(\theta, x)}{\pi(\theta) p(x)} d\theta dx $$
+\end{definition}
+
+\begin{statement}
+	Распределение Джефри инвариантно при трансформации $ \phi=h(\theta)$
+	$$ I(\phi) = I(\theta) (\frac{d\theta}{d\phi})^2$$
+\end{statement}

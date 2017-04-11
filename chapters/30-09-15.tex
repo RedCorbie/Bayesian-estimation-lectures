@@ -1,0 +1,85 @@
+\subsection*{Задача регрессии}
+$$ D = (X, \bar{y}) = \braces{(x_i, y_i)_{i=1}^N}, \ x_i \in \setR^p, y_i \in \setR $$ 
+$$ f(\bar{x_i}) \sim y_i $$
+Линейная регрессия:
+$$ f(\bar{x_i}) = \bar{x_i}^T \bar{\theta}, \bar{\theta} \in \setR^p $$
+$$  \bar{y} = X\bar{\theta} + \epsilon, \epsilon \sim N(0, \frac{1}{\beta})$$
+$$ \ln p(\bar{y}| X, \bar{\theta}) = -\frac{1}{2} \squarebraces{-N \log p + N\log 2\pi + \bar(\hat{y} - X\bar{\theta})^T(\bar{y} - X\bar{\theta})} \underset{\theta}{\to} \max $$
+$$  \ln p(\bar{y}|X, \bar{\theta} \underset{\theta}{\to} \max$$
+$$ \hat{\bar{\theta}} = (X^TX)^{-1}X^T\bar{y} $$
+$$ \frac{1}{\beta_{MAX}} = \frac{1}{N} \sum_{i=1}^N (y_i - \bar{X_i}^T \bar{\theta})^2$$
+Если, например, X плохо обусловлена, нужна регрессия
+
+\subsection*{Регуляризация для линейной регрессии}
+$$ (\bar{y} - X\bar{\theta})^T(\bar{y} - X\bar{\theta}) + \lambda ||\theta||_q^q \to \min $$
+$$ \begin{cases}
+(\bar{y} - X\bar{\theta})^T (\bar{y} - X\bar{\theta}) \underset{\theta}{\to} \min, \\
+||\theta||_q^q <t
+\end{cases} $$
+\begin{itemize}
+	\item $q=1$ - LASSO
+	\item $q=2$ - Ridge
+\end{itemize}
+
+$(X^TX) = I$ - X - ортогональная
+\begin{itemize}
+	\item $q=0$, $\bar{\theta}_{q=0} = \hat{\bar{\theta}}\set{I}\squarebraces{\bar{\hat{\theta}}}>\sqrt{2\lambda} $
+	\item $q=1$, $\bar{\theta}_{q=1} = sign(\hat{\bar{\theta}})$
+	\item $q=2$, $\bar{\theta}_{q=2} = (|\hat{\bar{\theta}}| - \lambda) + \frac{\bar{\theta}}{1+\lambda}$
+\end{itemize}
+
+Если ввести органичение на $\theta$: \\
+$$ n(\bar{\theta}) = N(0, \frac{1}{\alpha}I) $$
+В этом случае апостериорное распределение $\bar{\theta}$ тоже будет нормально:
+$$ p(\bar{\theta}|y,X) \propto N(\beta(\alpha I + \beta X^T)^{-1}X^T\bar{y}, (\alpha I +\beta X^T X)) $$
+Обозначим
+$$\beta(\alpha I + \beta X^T)^{-1}X^T\bar{y} = \mu_N$$
+$$ (\alpha I +\beta X^T X) = S_N $$
+
+$$ p(\bar{y}|X, \alpha, \beta) = \int p(\bar{y}|\bar{\theta}, \beta) p(\bar{\theta}|D, \alpha, \beta) d\bar{\theta} $$
+Так как оба распределения нормальные, в итоге получаем нормальное:
+$$ p(\bar{y}|X, \alpha, \beta) = N(\bar{X}^T\mu_N, \frac{1}{\beta} + X^T\mu_N X) $$
+$$ \ln p(\bar{y}|X, \alpha, \beta) = \frac{p}{2} \ln \alpha + \frac{N}{2}\ln \beta - \frac{\beta}{2}(y-X \mu_N)^T(y - X\mu_N) - \frac{\alpha}{2}\mu_N X^T X \mu_N - \frac{1}{2} \ln |S_N| - \frac{N}{2} \ln 2N$$
+Явно решить нельзя, но можно оптимизировать
+
+\subsection*{Логистическая регрессия}
+Дана выборка
+$$ D = (X, \bar{y}) = \braces{(\bar{x}_i, y_i)}_{i=1}^N, \ x_i \in \setR^p $$
+$$ p(y_i=1|X) = 1 - p(y_i=0|X) - ?, \ y_i \in \braces{0,1} $$
+$$ p_i = p(y_i=1|X) = \frac{1}{1+\exp{-\bar{x}_i^T\bar{\theta}}} $$
+Правдоподобие: 
+$$ \log p(y|X, \bar{\theta}) = \log \squarebraces{ \prod_{i=1}^N p_i^{y_i}(1=p_i)^{1-y_i}}$$
+$$ \pi(\bar{\theta}) = N(\bar{\theta}_0, \Sigma_0) $$
+$$ \log p(\theta|D) \propto -\frac{1}{2}(\hat{\theta} - \theta_0)\Sigma_0^{-1}(\hat{\theta} - \hat{\theta}_0) + \sum_{i=1}^N(y_i) \log p_i + (1-y_i) \log (1-p_i) $$
+\subsection*{Аппроксимация Лапласа}
+$$ p(\hat{\theta}) \sim q(\hat{\theta}) = N(\arg \max_{\theta \in \Theta} p(\hat{\theta}), \Sigma ) $$
+$$ \Sigma^{-1} = \braces{-\frac{\partial^2}{\partial\theta_i \partial\theta_j} \log p(\hat{\theta}^T)} $$
+Будем искать аппроксимацию Лапласа для $p(\theta|D)$
+$$ \Sigma^{-1} = \Sigma_0^{-1} + \sum_{i=1}^n p_i(1-p_i)\bar{x}_i^T\bar{x}_i $$
+$$ \hat{\bar{\theta}} = \bar{\theta}_{MAX} = \arg \max p(\bar{\theta}|D) $$
+Не хватает способа получения искомой величины:
+$$ p(y_i=1|\bar(X), D) = \int p(y_i=1|\bar{X}, \bar{\theta})p(\bar{\theta}|D) d\bar{\theta} \approx \int \sigma(\bar{\theta}^T \bar{X}) q{\bar{\theta}} d\bar{\theta}, $$
+где $$\sigma(\bar{\theta}^T\bar{X}) = \frac{1}{1+\exp{-\bar{\theta}^T\bar{X}}}$$
+В таком виде решить не можем, поэтому используем прием: 
+$$ \sigma(\bar{\theta}^T\bar{X}) = \int \sigma(a - \bar{\theta}^T\bar{X}) \sigma(a)da $$
+$$ p(a) = \int \sigma(a - \bar{\theta}^T\bar{X}) q(\bar{\theta}) d\bar{\theta} $$
+$$ p(a) = N(\mu_a, \sigma_a^2), \ \mu_q = \bar{\theta}_{MAX}^T \bar{X} $$
+Можно переписать интеграл в таком виде:
+$$ p(y_i=1|\bar{X}, D) \approx \int \sigma(a)N(q|_{\mu_q, \sigma_q^2})dq $$
+Все еще не можем взять, аппроксимируем еще раз
+$$ \sigma(a) \approx \Phi(\lambda a), \ \lambda^2 = \frac{\pi}{8}$$
+$$ \Phi(\lambda a) = \int_{-\infty}^{\lambda a} p(x)dx, \ p(x) = N(0,1) $$
+$$ \int \Phi(\lambda a)  N(a| \mu_a, \sigma_a^2) da = \Phi(\frac{\mu_a}{(\lambda^{-2} + \sigma^2)^{\frac{1}{2}}}$$
+
+$$ p(y_i=1|\bar{X}, D) =   \Phi(\frac{\mu_a}{(\lambda^{-2} + \sigma^2)^{\frac{1}{2}}},$$
+где $\mu_a = \bar{\theta}_{MAX}^T \bar{X}, \ \sigma_a^2 = \bar{X}^T(-\nabla \nabla \log p(\bar{\theta}|D) \bar{X}$
+
+\subsection*{Линейная регрессия(продолжение)}
+Априорное распределение Джеффри:
+$$ \pi(\frac{1}{\beta}) \propto \beta $$
+$$ \bar{\theta} \sim N(\bar{\theta}_0, \frac{g}{\beta}(X^TX)^{-1}) $$
+$\Rightarrow$
+$$ p(\bar{\theta}|\sigma^2, y, X) \propto N\Big( \frac{g}{g+1}(\frac{\bar{\theta}_0}{g} + \hat{\bar{\theta}}, \frac{1}{\beta} \frac{g}{g+1}(X^TX)^-1)\Big)$$
+
+$$ p(y|X,g) = \frac{\Gamma (\frac{N_1}{2})}{\pi^{\frac{N+1}{2}}\sqrt{N}} || \bar{y} - y_{cp} ||^{-(N_1)} \frac{(1+g)^{\frac{N-1-p}{2}}}{(1+g(1-R^2))^{\frac{N-1}{2}}} $$
+$$ y_{cp} = \frac{1}{N} \sum_{i=1}^N y_i, \ R^2 = 1 - \frac{(\bar{y} - X\hat{\bar{\theta}})^T(\bar{y} - X\hat{\bar{\theta}})}{(\bar{y} - y_{cp})^T(\bar{y} - y_{cp})} $$

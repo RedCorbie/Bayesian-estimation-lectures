@@ -1,0 +1,68 @@
+Необходимые свойства:
+\begin{itemize}
+	\item $Dir(p|\alpha) = \frac{\Gamma(\sum \alpha_i)}{\prod \Gamma(\alpha_i)}\prod p^{\alpha_i-1}$
+	\item $(\sum_{i \in A_1} p_i, \ldots \sum_{i \in A_k} p_i) \sim Dir(\hat{p}|\sum_{i \in A_1} \alpha_i, \ldots \sum_{i \in A_k} \alpha_i)$
+	\item $p \sim Dir(\alpha), p_i \indep \frac{1}{1-p_i}(p_1 \ldots p_{i-1}, p_{i+1}, \ldots p_d)$
+\end{itemize}
+
+Генерация из $c_i \sim Gam(\alpha_i, 1), \ p_i=\frac{c_i}{\sum c_k}, i=1, \ldots, d$
+\subsection{Способы генерации}
+\subsubsection{Процесс поломки палки} 
+Идея: есть $\alpha_1, \ldots, \alpha_d$. Нужно сгенерировать распределение с такими параметрами.
+\begin{enumerate}
+	\item $p_1=v_1 \sim Beta(\alpha_1, \sum_{j=2}^d \alpha_j)$
+	\item $p_2=v_2(1-v_1), v_2 \sim Beta(\alpha_2, \sum_{j=3}^d \alpha_j)$  \\
+	...
+	\item $p_i = v_i \prod_{j=1}^{i-1}(1-v_j), v_j \sim Beta(\alpha_i, \sum_{j=i+1}^d \alpha_j)$
+\end{enumerate}
+Для того, чтобы оборвать процесс: $v_d=1, \ p_d=1-\sum_{i=1}^{d-1}p_i$
+
+\subsection{Модельные наблюдения и кластеризация}
+Пусть модель генерируется из $x_i \sim N(\mu, \sigma_x I)$ - кластер. Будем говорить, что $\mu \sim N(0, \sigma_{\mu} I)$
+$$ p(\mu|x_1, \ldots, x_n) = N(\frac{\sigma_N}{\sigma_x}\sum x_i, \sigma_n I), \frac{1}{\sigma_n} = \frac{1}{\sigma_{\mu}} + \frac{n}{\sigma_x} $$
+$$ G \sim DP(H, \alpha), H = N(0, \sigma_{\mu}I) $$
+
+Предполагаем $\mu \sim G$ и тогда генерируем $x_i \sim N(\mu_i, \sigma_x I)$. Из идеи китайского ресторана:
+$$ \mu_1\ \ldots \mu_n \Rightarrow \mu_i|\mu_1 \ldots \mu_{i-1} \sim 1) (H, \frac{\alpha}{\alpha_n+i-1}), \ 2)\mu_c, \frac{\sum [\mu_k=c]}{\alpha+h}  $$
+
+Как организовать процесс генерации точек с помощью одного из методов Монте-Карло?
+Способы оценки процесса Дирихле:
+
+\subsubsection{MCMC (Monte-Karlo, Markov chain)}
+Пусть можем генерировать каким-то образом $X = (X_1, \ldots, X_n)$, а вектор $\theta_i$ - все параметры, которые нам интересны. Допустим, что вер модель устроена так, что условные вер-ти .$p(\theta_i|\theta_{-i}, X)$. можем подсчитать аналитически или имеет алгоритм, позволяющий генерировать из вероятностей. Тогда итерируем по i, генерируем $\theta$, тогда получим $p(\theta|X)$. Вопрос, как подсчитать
+$$ p(\theta_i, X_i | \theta_{-i}, X_{-i}) = p(\theta_i|\theta{-i})p(x_i | \theta_i) $$
+Если параметр фиксирован, то $X$ генерируются из соответствующих распределений 
+$$ p(\theta_i | \theta_{-i}, X_i) = \frac{p(\theta_i|\theta_{-i}) p(X_i|\theta_i) }{\int p(\theta_i|\theta_{-i}) p(X_i|\theta_i) d\theta_i} $$
+$$ p(\theta_i | \theta_{-i}) = \frac{\alpha}{\alpha+n-1} p(\theta_i) + \frac{1}{\alpha+n-1} \sum_{j \neq i} \delta_{\theta_j}(\theta_i) $$
+Каждое наблюдение генерируется из своего кластера с параметром $\theta_i$. Хотим оценить совместное распределение $\theta_1, \ldots, \theta_n$ с учетом того, что некоторые могут совпадать. 
+
+Для нормального распределения:
+$$ p(\mu_i|\mu_{-i}, X) = \frac{\alpha}{Z} N(X_i|0, (\sigma_x + \sigma_{\mu})I) N(\mu_i | \frac{\sigma_1}{\sigma_x}x_i, \sigma_1 I) + \frac{1}{Z} \sum_{k \neq i}^n \delta_{\mu_j}(\mu_i)N(\mu_i | \mu_j, \sigma_{\lambda}I) $$
+$$ Z = \alpha N(X_i|0, (\sigma_x + \sigma_{\mu})I) + \sum_{j \neq i} N(X_i|\mu_j, \sigma_xI) $$
+Этот метод медленно сходится, поэтому:
+
+\subsubsection{MacEachern scheme}
+Пусть есть переменная $Z_i \in N$ - указывает кластер, $\theta_k$ - описывает k-ый кластер, и есть наблюдение $X_i$. Ненаблюдаемые переменные $(Z_1, \ldots Z_n) \sim CRP(\alpha, n)$ - порoждаются процессом китайского ресторана \\
+$p(z_i| z_{\-i}) = 1) (\frac{\sum_{j \neq i} I[z_j=c]}{\alpha+n-1})$, если $z_i$ принадлежит кластеру $c$, а если $z_i$ образует новый кластер: $ \frac{\alpha}{\alpha+n-1}$.
+$$ \theta_i \sim H, \ X_i \sim p(x_{-i} | \theta_i) $$
+Дальше хотим генерировать наблюдения из распределения $\bX = (X_1, \ldots, X_n), \ p(Z, \theta| \bX)$ с плотностями, $p(z_i|z_{-i}, \theta, \bX), \ p(\theta_k | z, \theta_{-k}, \bX)$
+Метод сходится гораздо быстрее и сразу дает индикаторы принадлежности к кластерам
+
+При фиксированном $Z$:
+$$ p(X, \theta | Z) = \prod_{k=1}^K p_H(\theta_k) \prod_{i=1}^n p(x_i|\theta_{Z_i}) $$
+
+$$ p(\theta_k|\theta_{-i}, Z, X) \propto p_H(\theta_i) \prod_{i:z_i=k}p(x_i|\theta_k) $$
+$$ p(z_i=k|Z_{-i}, \theta, X) = \frac{n_{-i,k}}{z_i (\alpha+n-1)}p(x_i|\theta_k) $$
+
+Вероятность попасть в существующий кластер:
+$$ h_{-i,k} = \sum_{j \neq i} I[z_j=k] $$
+Если создается новый кластер сначала нужно сгенерировать для него $\theta_{new}$:
+$$ p(z_i=new, \theta_{new} | Z_{-i}, \theta, X) = \frac{\alpha}{Z_i (\alpha+n-1)} p(x_i|\theta_{new})p_H{\theta_{new}} $$
+
+$$p(z_i=new|... = \int p(z_i=new, \theta_{new}| ...)p_H(\theta_{new}) d\theta_{new} $$
+
+
+\subsubsection{Коллапсированная схема Мак-Ичерна}
+
+$$ p(z_i=k | Z_{-i}, X) = \frac{n_{-i,k}}{Z_i (\alpha+n-1)} \int p(x+i|\theta_k) p(\theta_k|X_{-i,k}) d\theta_k$$
+$$ X_{-i,k} = (x_1, \ldots, X_{i-1}, X_{i+1}, \ldots, X_k) $$

@@ -1,0 +1,34 @@
+Проверяем следующие свойства для распределения Дирихле:
+\begin{enumerate}
+	\item Из накопления $Dir(\alpha_1, \ldots, \alpha_n, \alpha_{n+1})$
+	\item из $\alpha(B_n) \to \alpha(B)$ и свойства выполняются
+\end{enumerate}
+
+\begin{itemize}
+	\item Индикаторный элемент: Гаус. проц: $x \in \setR^d$, Проц. Дир: $A \in \tau \subset 2^{\setR^d}$
+	\item Реализация: $f: \setR^d \to \setR^q$ и вероятностное распределение $ G: \tau  \to [0,1]$
+	\item Параметр $ \mu(x), K(x, x)$ и опорное вер. распр. $H$ и концентрация $\alpha>0$
+	\item Одномерное сечение $Y(x) \propto N(\mu(x), K(x,x))$ и $A: \xi(., A) \sim \beta(\alpha H(A), \alpha (1-H(A)))$
+	\item Многомерное сечение $\bar{y} = (y(x_1), \ldots, y(x_n)) \sim N(\bar{\mu}, K)$ и $ A_1, \ldots, A_n, \ P(A_1), \ldots P(A_n) \sim Dir(\alpha(H(A_1), \ldots \alpha H(A_n))) $
+\end{itemize}
+
+Процесс Дирихле дискретен: $$ P(x) = \sum_{i=1}^\infty p_i \delta_{x_i} $$
+Условное распределение: $$ G \sim Dir(H, \alpha), \ \theta_1, \ldots \theta_n | G \sim G $$
+$$ G | \theta_1, \ldots, \theta_n \sim Dir(H \frac{\alpha}{\alpha + n} + \frac{\sum_{i=1}^\infty \delta_{\theta_i}}{\alpha+n}, \alpha+n) $$
+$$ \theta_{n+1} | \theta_1, \ldots, \theta_n \sim \frac{\alpha}{\alpha+n}H + \frac{1}{\alpha+n} \sum_{i=1}^\infty \delta_{\theta_i}$$
+
+
+$$ O(log n) \to O(n^d), d \in [0,1] $$
+
+$$ \theta_{n+1} | \theta_1, \ldots, \theta_n \sim H \subset \frac{\alpha\mu(\theta_1, \ldots, \theta_n)} , \delta_{\theta} \subset \frac{(\sum_{i=1}^\infty[\theta_i = \theta]) - d}{\alpha+n}$$
+
+В иерархическом процессе Дирихле тематического моделирования объекты – слова, группы объектов - документы, кластемы - темы
+$$ G_0 | H, \alpha \sim Dir(H, \alpha) $$
+$$ G_j | G_0, \alpha_0 \sim Dir(G_0, \alpha_0), j=1, \ldots, \infty $$
+
+Процесс Дирихле для смеси:
+$$ G \sim Dir(H, \alpha), (\theta_i|G) \sim G, \ x_i \sim p(x_i|\theta_i) $$
+Смесь гауссиан:
+$$ \Sigma = const = I $$
+$$ \bar{\theta} = (\bar{m}, \sigma): p(x_i|\theta) \sim N(\bar{\mu}, \sigma^2I) $$
+

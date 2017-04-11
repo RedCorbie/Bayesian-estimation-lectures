@@ -1,0 +1,125 @@
+$p(\theta)$ - вероятностное распределение \\
+$$ \int_{\setR^p} f(\bar{\theta}) p(\bar{\theta}) d\bar{\theta} $$
+
+\begin{itemize}
+	\item Монте-Карло: $ \int_{\setR^p} f(\bar{\theta}) p(\bar{\theta}) d\bar{\theta} = \sum f(\bar{\theta_i}), \ \bar{\theta} \sim p(\bar{\theta})$
+	\item $ q(\theta) \approx p(\theta)$, тогда искомый интеграл берется. Раньше считали: $q(\bar{\theta})$ - нормальное, $\mu = \argmax p(\theta)$, $\sum = \frac{\partial^2}{\partial \theta_i \partial \theta_j} \ln p(\theta)$
+\end{itemize}
+Будем смотреть, как можно приблизить $q(\theta)$
+\subsection*{Вариационный вывод} 
+$X$ - данные, $\bar{\theta}$ -параметры модели.
+$$ p(X, \theta); \ q(\theta) \approx p(\bar{\theta}|X) - ?; \ p(X) - ? $$
+Утверждение: \\
+$\ln p(X) = \setL(q) + KL(q|p)$, где 
+$$\setL(q) = \int q(\bar{\theta}) \ln \frac{p(X, \bar{\theta})}{q(\bar{\theta})} d\bar{\theta} $$
+$$ KL(q|p) = -\int q(\theta) \ln \frac{p(X, \bar{\theta})}{q(\bar{\theta})} d\bar{\theta} $$
+
+$$ \int q(\bar{\theta}) \ln \frac{p(X, \bar{\theta})}{q(\bar{\theta})} d\bar{\theta}  = \int q(\bar{\theta}) \ln p(X) d\bar{\theta} = \ln p(X) $$
+Поэтому хорошая стратегия: $KL(q|p) \to \min_q$
+Разобьем $\bar{\theta} = (\bar{\theta_1}, \ldots, \bar{\theta_n})$
+
+$q_j(\bar{\theta}_j) = \prod q_j$
+$$ \setL(q) = \int \prod q_i \braces{\ln p(X, \bar{\theta}) \sum \ln q_i}d\bar{\theta} = \int q_j \ln p(X, \bar{\theta})\prod_{i \neq j} q_j d\bar{\theta} - \int q_i \ln q_j d\bar{\theta} =$$
+$$ = \int q_j \ln \check{p}(\bar{\theta}_j, X)d\bar{\theta}_j - \int q_i \ln q_j d\bar{\theta}_j $$
+$$ \ln \check{p}(X, \bar{\theta}_j) = \ex{i \neq j} \ln p(X, \bar{\theta}) + const $$
+Подробнее: 
+$$ \int \prod q_i \sum \ln q_i d\bar{\theta} = \int \prod q_i \ln q_j d\bar{\theta}_j d\bar{\theta}_i + \int \prod_{i \neq j} q_i \sum_{i \neq j} \ln q_i d\bar{\theta}_j d\bar{\theta}_i$$
+Необходимое условие минимума:
+$$ \ex{i \neq j} \ln p(X, \bar{\theta}) = \int \ln p(X, \bar{\theta}) \prod_{i \neq j} q_i d\bar{\theta} $$
+То есть, мы минимизируем расстояние Кулльбека-Лейблера между $q_j$ и $\check{p}(X, \bar{\theta}_j$. То есть, решаем следующую задачу:
+$$ \setL(q) \to \min_{q_j} $$
+$$ KL(q_j|\check{p}(X, \bar{\theta})) = - \int q_j \frac{\check{p}(X, \bar{\theta}_j)}{q_j} d\bar{\theta}_j \to \min$$
+То есть: 
+$$ \ln q_j^*(\bar{\theta}_j) = \ex{i \neq j} \ln p(X, \bar{\theta}) + const $$
+$$ q_j^*(\bar{\theta}_j) = \frac{\exp{\ex{i \neq j}{\ln p(X, \bar{\theta})}}}{\int \exp{\ex{i \neq j}{\ln p(X, \bar{\theta}) d\bar{\theta}}}} $$
+
+Алгоритм:
+\begin{enumerate}
+	\item Выбираем $q_i(\bar{\theta})$
+	\item Итерируем $q_i^*(\bar{\theta})$ и ищем $q^* = \frac{q(\bar{\theta})}{q_i(\bar{\theta})}q_i^*(\bar{\theta})$
+\end{enumerate}
+
+\begin{example}
+	$$p(\bar{\theta}) = N(\bar{\theta}| \mu, \Lambda^{-1})$$
+	$$ \mu = (\mu_1, \mu_2), \Lambda = ( \lambda_{11}, \lambda_{12}, \\ \lambda_{21}, \lambda_{22}) $$
+	$$ q(\bar{\theta}) = q_1(\bar{\theta}_1)q_2(\bar{\theta}_2) $$
+	$$ \ln q_1*(\theta_1) = \ex{\theta_2} \ln p(\bar{\theta}) + const  = \ex{\theta}{-\frac{1}{2}(\theta_1 - \mu_1)^2 \Lambda_{11} - (\theta_1-\mu_N)\Lambda_{12}(\theta_2-\mu_2)} + const =$$  
+
+	$$= -\frac{1}{2} \theta_1^2 \Lambda_{11} + \theta_1 \mu_1 \Lambda_{11} - \theta_1 \Lambda_{12}(\ex{theta_2}-\mu_2) + const $$
+
+	$$ q_1^*(\theta_1) = N(\theta_1|m_1, \Lambda_{11}^{-1}) $$
+
+	$$ m = \mu_1 - \Lambda_{11}^{-1}\Lambda_{12}(\ex{\theta_2} - \mu_2) $$
+	$$ q_2^*(\theta_2) = N(\theta_2|m_2, \Lambda_{22}^{-1}) $$
+	$$ m_2 = \mu_2 - \Lambda_{11}^{-1}\Lambda_{12}(\ex{\theta_1} - \mu_1) $$
+	$$ \begin{cases}
+		m_1 = \mu_1 - \Lambda_{11}^{-1}\Lambda_{12}\squarebraces{m_2-\mu_2} & \\
+		m_2 = \mu_2 - \Lambda_{22}^{-1}\Lambda_{21}\squarebraces{m_1-\mu_1} \\
+	\end{cases} $$
+	$$ m_1 = \mu_1, \ m_2 = \mu_2 $$
+
+	$$ KL(p||q) \to \min_q, \ KL(p|q) = -\int p(\bar{\theta}) \sum_{i=j}^m \ln q_i(\bar{\theta}) d\theta$$
+	$$ q_i^*(\bar{\theta}) = \int p(\bar{\theta}) \prod_{j \neq i} d\bar{\theta}_j = p(\bar{\theta}_j) $$
+
+	$$ KL(q|p) = -\int q(\theta) \ln \frac{p(\theta)}{q(\theta)} d\theta $$
+	$$ KL(p|q) = - \int p(\theta) \ln \frac{q(\theta)}{p(\theta)} $$
+
+\end{example}
+
+Можно описать более строго, если ввести семейство распределений:
+\begin{definition}
+$$ D_{\alpha}(p|q) = \frac{1}{1-\alpha} (1-\int p(x)^{(1+\alpha)/2})q(x)^{(1-\alpha)/2} dx )$$
+\begin{enumerate}
+	\item $\alpha \to 1 \Rightarrow KL(p|q)$
+	\item $ $
+	\item $D_{\alpha}(p|q) \geq 0$
+	\item $D_{\alpha}(p|q) = 0 \Leftrightarrow p(x) = q(x)$
+	\item $$ \alpha \leq -1 \Rightarrow D_{\alpha}(p|q) \to \min_q, \ p(x) = 0 \Rightarrow q(x)=0 $$
+	\item $\alpha \geq 1 \Rightarrow D_{\alpha}(p|q) \to \min_q \Rightarrow p(x) >0, q(x) > 0$
+	\item ...
+\end{enumerate}
+\end{definition}
+
+Найдем расстояние Кулльбека-Лейблера между произвольным распределением и распределением из экспоненциального семейства: 
+$$ KL(p|q) = -\ln q(\bar{\eta}) - \eta^T \ex{p(\bar{\theta})}{u(\bar{\theta})} + const $$
+$$ - \nabla \ln g(\bar{\eta}) = \ex{p(\bar{\theta})} u(\bar{\theta}) $$
+$$ \ex{q(\bar{\theta})}{u(\bar{\theta})} = - \nabla \ln g(\bar{\eta}) $$
+Из метода моментов:  $$ \ex{q(\bar{\theta})}{u(\bar{\theta})} = \ex{p(\bar{\theta})}{u(\bar{\theta})} $$
+
+Дл минимизации этого расстояния предполагаем, что правдоподобие имеет специальный вид: 
+$$ p(X, \bar{\theta}) = \prod_i f_i(\bar{\theta}) $$
+$$ f_i(\bar{\theta}) = p(\bar{X}_i|\bar{\theta}) $$
+$f_0(\bar{\theta}) = \pi(\bar{\theta})$ - априорная факторизация
+$$p(\theta|X) - ? \ \ p(X) - ?$$
+Запишем в явном виде для апостериорного распределения
+$$ p(\bar{\theta}|X) = \frac{1}{p(X)} \prod f_i(\bar{\theta}) $$
+$$ p(X) = \int \prod_i f_i(\bar{\theta})d\bar{\theta} $$
+Можем приблизить $f_i \to \check{f_i}$. Предполагаем \begin{enumerate}
+	\item $q(\bar{\theta}) = \frac{1}{z} \prod_i \check{f}_i(\bar{\theta}), \ \check{f}_i(\bar{\theta}) \sim f_i(\bar{\theta})$
+	\item $\check{f}_i(\bar{\theta})$ - из экспоненциального семейства
+\end{enumerate}
+Варианты решения оптимизационной задачи: \begin{enumerate}
+	\item $ KL(f_i(\theta)|\check{f}_i(\theta)) \to \min$
+	\item $ KL(p|q) = KL(\frac{1}{p(X)}\prod_i f_i(\bar{\theta}))| \frac{1}{z} \prod \check{f}_i(\bar{\theta})$
+	\item По очереди оптимизируем пред. выражение по $\check{f}_i(\bar{\theta})$
+\end{enumerate}
+
+\begin{enumerate}
+	\item $q(\bar{\theta}) = \frac{1}{z} \prod_i \check{f}_i(\bar{\theta})$
+	\item $ q^{min}(\bar{\theta}) \propto \check{f}_j(\bar{\theta}) \prod_{i \neq j} \check{f}_j(\bar{\theta}) $ - близка к $f_j(\bar{\theta})\prod \check{f}_j(\bar{\theta}), \ q^j(\bar{\theta}) = \frac{q(\bar{\theta})}{\check{f}_j(\bar{\theta})}$
+\end{enumerate}
+\begin{example}
+	$$p(\bar{X}|\bar{\theta}) = (1-\omega) N(\bar{X}|\bar{\theta},I) + \omega N(\bar{X}|0,aI)$$
+	$\omega, a$ - известны. Априорное распределение:
+	$$ \pi(\bar{\theta}) = N(\bar{\theta}|0,bI) $$
+
+	$$ p(X, \bar{\theta}) = \pi(\bar{\theta}) \prod_{n=1}^N p(\bar{X}_n|\bar{\theta}) $$
+	$$ f_0(\bar{\theta}) = \pi(\bar{\theta}) $$
+	$$ v_n^{-1} = (v^{new})^{-1} - (v^{\\n})^{-1} $$
+	$$ q^n(\bar{\theta}) = N(\bar{m}^{\\n}, (v^{\\n})^{-1}I$$
+	$$ \bar{m}^n  = \bar{m} + \frac{v^{\alpha_n}}{v_n} (\bar{m} - \bar{m}_n$$
+	$$ q^{new}(\bar{\theta}) = q^{\\n}(\bar{\theta})f_n(\bar{\theta}) $$
+	$$ \check{f}_n(\bar{\theta}) = s_n N(\theta| \bar{m}_n, v_nI) $$
+	$$ s_n = \frac{z_n}{(2\pi v_n)^{p/2}N(\bar{m}_n| \bar{m}^{\\n}, (v_n + v^{\\n})I} $$
+\end{example}
+
